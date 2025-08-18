@@ -30,6 +30,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -245,7 +246,6 @@ fun ChatActivityScreenUI(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
-                            modifier = Modifier.shadow(2.dp),
                             title = {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
@@ -271,7 +271,7 @@ fun ChatActivityScreenUI(
                                     Icon(
                                         FeatherIcons.Menu,
                                         contentDescription = stringResource(R.string.chat_view_chats),
-                                        tint = MaterialTheme.colorScheme.secondary,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                     )
                                 }
                             },
@@ -290,7 +290,7 @@ fun ChatActivityScreenUI(
                                             Icon(
                                                 FeatherIcons.MoreVertical,
                                                 contentDescription = "Options",
-                                                tint = MaterialTheme.colorScheme.secondary,
+                                                tint = MaterialTheme.colorScheme.onSurface,
                                             )
                                         }
                                         ChatMoreOptionsPopup(viewModel, onEditChatParamsClick)
@@ -304,7 +304,7 @@ fun ChatActivityScreenUI(
                         modifier =
                             Modifier
                                 .padding(innerPadding)
-                                .background(MaterialTheme.colorScheme.surface),
+                                .background(MaterialTheme.colorScheme.background),
                     ) {
                         if (currChat != null) {
                             ScreenUI(viewModel, currChat!!)
@@ -497,169 +497,178 @@ private fun LazyItemScope.MessageListItem(
 ) {
     var isEditing by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    if (!isUserMessage) {
-        Row(
-            modifier =
+
+    AnimatedVisibility(
+        visible = true,
+        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+        modifier = modifier.animateItem()
+    ) {
+        if (!isUserMessage) {
+            Row(
+                modifier =
                 modifier
                     .fillMaxWidth()
-                    .animateItem(),
-        ) {
-            Column {
-                Spacer(modifier = Modifier.height(8.dp))
-                Icon(
-                    modifier = Modifier.padding(4.dp),
-                    imageVector = FeatherIcons.User,
-                    contentDescription = null,
-                )
-            }
-            Column {
-                ChatMessageText(
-                    // to make pointerInput work in MarkdownText use disableLinkMovementMethod
-                    // https://github.com/jeziellago/compose-markdown/issues/85#issuecomment-2184040304
-                    modifier =
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Icon(
+                        modifier = Modifier.padding(4.dp),
+                        imageVector = FeatherIcons.User,
+                        contentDescription = null,
+                    )
+                }
+                Column {
+                    ChatMessageText(
+                        // to make pointerInput work in MarkdownText use disableLinkMovementMethod
+                        // https://github.com/jeziellago/compose-markdown/issues/85#issuecomment-2184040304
+                        modifier =
                         Modifier
                             .padding(4.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(4.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceContainer,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(8.dp)
                             .fillMaxSize(),
-                    textColor = MaterialTheme.colorScheme.onBackground.toArgb(),
-                    textSize = 16f,
-                    message = messageStr,
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = stringResource(R.string.chat_message_copy),
-                        modifier = Modifier.clickable { onCopyClicked() },
-                        fontSize = 6.sp,
+                        textColor = MaterialTheme.colorScheme.onSurface.toArgb(),
+                        textSize = 16f,
+                        message = messageStr,
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.chat_message_share),
-                        modifier = Modifier.clickable { onShareClicked() },
-                        fontSize = 6.sp,
-                    )
-                    responseGenerationSpeed?.let {
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Box(
-                            modifier =
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = stringResource(R.string.chat_message_copy),
+                            modifier = Modifier.clickable { onCopyClicked() },
+                            fontSize = 6.sp,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.chat_message_share),
+                            modifier = Modifier.clickable { onShareClicked() },
+                            fontSize = 6.sp,
+                        )
+                        responseGenerationSpeed?.let {
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Box(
+                                modifier =
                                 Modifier
                                     .size(2.dp)
                                     .clip(CircleShape)
                                     .background(Color.DarkGray),
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "%.2f tokens/s".format(it),
-                            fontSize = 8.sp,
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Box(
-                            modifier =
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "%.2f tokens/s".format(it),
+                                fontSize = 8.sp,
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Box(
+                                modifier =
                                 Modifier
                                     .size(2.dp)
                                     .clip(CircleShape)
                                     .background(Color.DarkGray),
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "$responseGenerationTimeSecs s",
-                            fontSize = 8.sp,
-                        )
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "$responseGenerationTimeSecs s",
+                                fontSize = 8.sp,
+                            )
+                        }
                     }
                 }
             }
-        }
-    } else {
-        Row(
-            modifier =
+        } else {
+            Row(
+                modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .animateItem(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Column(horizontalAlignment = Alignment.End) {
-                var message by remember { mutableStateOf(messageStr.toString()) }
-                if (isEditing) {
-                    TextField(
-                        value = message,
-                        onValueChange = { message = it },
-                        modifier =
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Column(horizontalAlignment = Alignment.End) {
+                    var message by remember { mutableStateOf(messageStr.toString()) }
+                    if (isEditing) {
+                        TextField(
+                            value = message,
+                            onValueChange = { message = it },
+                            modifier =
                             Modifier
                                 .padding(8.dp)
                                 .background(
-                                    MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    MaterialTheme.colorScheme.primaryContainer,
                                     RoundedCornerShape(16.dp),
                                 ).padding(8.dp)
                                 .widthIn(max = 250.dp),
-                        colors =
+                            colors =
                             TextFieldDefaults.colors(
                                 errorContainerColor = Color.Transparent,
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
                                 disabledContainerColor = Color.Transparent,
+                                focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
                             ),
-                    )
-                } else {
-                    ChatMessageText(
-                        modifier =
+                        )
+                    } else {
+                        ChatMessageText(
+                            modifier =
                             Modifier
                                 .padding(4.dp)
                                 .background(
-                                    MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    MaterialTheme.colorScheme.primaryContainer,
                                     RoundedCornerShape(16.dp),
                                 ).padding(8.dp)
                                 .widthIn(max = 250.dp),
-                        textColor = MaterialTheme.colorScheme.onSurface.toArgb(),
-                        textSize = 16f,
-                        message = messageStr,
-                    )
-                }
+                            textColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
+                            textSize = 16f,
+                            message = messageStr,
+                        )
+                    }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(R.string.chat_message_copy),
-                        modifier = Modifier.noRippleClickable { onCopyClicked() },
-                        fontSize = 6.sp,
-                        lineHeight = 6.sp,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.chat_message_share),
-                        modifier = Modifier.noRippleClickable { onShareClicked() },
-                        fontSize = 6.sp,
-                    )
-                    if (allowEditing) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = stringResource(R.string.chat_message_copy),
+                            modifier = Modifier.noRippleClickable { onCopyClicked() },
+                            fontSize = 6.sp,
+                            lineHeight = 6.sp,
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (isEditing) {
-                            Text(
-                                text = stringResource(R.string.edit_chat_message_done),
-                                modifier =
+                        Text(
+                            text = stringResource(R.string.chat_message_share),
+                            modifier = Modifier.noRippleClickable { onShareClicked() },
+                            fontSize = 6.sp,
+                        )
+                        if (allowEditing) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            if (isEditing) {
+                                Text(
+                                    text = stringResource(R.string.edit_chat_message_done),
+                                    modifier =
                                     Modifier.clickable {
                                         isEditing = false
                                         onMessageEdited(message)
                                     },
-                                fontSize = 6.sp,
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = context.getString(R.string.dialog_neg_cancel),
-                                modifier =
+                                    fontSize = 6.sp,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = context.getString(R.string.dialog_neg_cancel),
+                                    modifier =
                                     Modifier.clickable {
                                         isEditing = false
                                         message = messageStr.toString()
                                     },
-                                fontSize = 6.sp,
-                            )
-                        } else {
-                            Text(
-                                text = context.getString(R.string.dialog_edit_folder_button_text),
-                                modifier = Modifier.clickable { isEditing = true },
-                                fontSize = 6.sp,
-                            )
+                                    fontSize = 6.sp,
+                                )
+                            } else {
+                                Text(
+                                    text = context.getString(R.string.dialog_edit_folder_button_text),
+                                    modifier = Modifier.clickable { isEditing = true },
+                                    fontSize = 6.sp,
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.width(16.dp))
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
                 }
             }
         }
@@ -717,6 +726,8 @@ private fun MessageInput(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                             ),
                         placeholder = {
                             Text(
