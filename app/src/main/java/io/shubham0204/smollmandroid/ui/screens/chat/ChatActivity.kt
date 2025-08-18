@@ -84,10 +84,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -207,10 +209,11 @@ fun ChatActivityScreenUI(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     LaunchedEffect(currChat) { viewModel.loadModel() }
-    SmolLMAndroidTheme {
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        SmolLMAndroidTheme {
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
                 DrawerUI(
                     viewModel,
                     onItemClick = { chat ->
@@ -314,6 +317,7 @@ fun ChatActivityScreenUI(
             FolderOptionsDialog()
         }
     }
+}
 }
 
 @Composable

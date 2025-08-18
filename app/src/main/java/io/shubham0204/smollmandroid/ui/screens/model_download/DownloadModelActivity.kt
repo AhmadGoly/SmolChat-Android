@@ -51,13 +51,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.net.toUri
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
@@ -79,25 +82,27 @@ class DownloadModelActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SmolLMAndroidTheme {
-                DownloadModelScreen(
-                    onBackClick = { finish() },
-                    viewModel = viewModel,
-                    onFileSelected = { uri ->
-                        if (checkGGUFFile(uri)) {
-                            viewModel.copyModelFile(uri, onComplete = { openChatActivity() })
-                        } else {
-                            createAlertDialog(
-                                dialogTitle = getString(R.string.dialog_invalid_file_title),
-                                dialogText = getString(R.string.dialog_invalid_file_text),
-                                dialogPositiveButtonText = "OK",
-                                onPositiveButtonClick = {},
-                                dialogNegativeButtonText = null,
-                                onNegativeButtonClick = null,
-                            )
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                SmolLMAndroidTheme {
+                    DownloadModelScreen(
+                        onBackClick = { finish() },
+                        viewModel = viewModel,
+                        onFileSelected = { uri ->
+                            if (checkGGUFFile(uri)) {
+                                viewModel.copyModelFile(uri, onComplete = { openChatActivity() })
+                            } else {
+                                createAlertDialog(
+                                    dialogTitle = getString(R.string.dialog_invalid_file_title),
+                                    dialogText = getString(R.string.dialog_invalid_file_text),
+                                    dialogPositiveButtonText = "OK",
+                                    onPositiveButtonClick = {},
+                                    dialogNegativeButtonText = null,
+                                    onNegativeButtonClick = null,
+                                )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
         openChatScreen = intent.extras?.getBoolean("openChatScreen") ?: true

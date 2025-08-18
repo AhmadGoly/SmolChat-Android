@@ -16,7 +16,7 @@
     <string name="chat_select_task">یک وظیفه را انتخاب کنید</string>
     <string name="chat_drawer_new_chat">چت جدید</string>
     <string name="chat_drawer_new_task">وظیفه جدید</string>
-    <string name="chat_drawer_manage_tasks">مدیریت وظایf</string>
+    <string name="chat_drawer_manage_tasks">مدیریت وظایف</string>
     <string name="chat_drawer_previous_chat">چت ها</string>
     <string name="chat_options_edit_settings">ویرایش تنظیمات چت</string>
     <string name="chat_options_change_model">تغییر مدل</string>
@@ -71,14 +71,14 @@
     <string name="download_model_hf_search_label">جستجوی مدل ها ...</string>
     <string name="download_model_hf_details_title">جزئیات مدل</string>
     <string name="dialog_ctx_usage_title">استفاده از طول زمینه</string>
-    <string name="dialog_ctx_usage_text">شما از٪ 1$s نشانه از٪ 2$s نشانه موجود استفاده کرده اید.</string>
+    <string name="dialog_ctx_usage_text">شما از %1$s نشانه از %2$s نشانه موجود استفاده کرده اید.</string>
     <string name="dialog_ctx_usage_close">بستن</string>
     <string name="dialog_err_title">خطایی روی داد</string>
-    <string name="dialog_err_text">برنامه قادر به بارگیری مدل نیست. پیام خطا این است:٪ 1$s</string>
+    <string name="dialog_err_text">برنامه قادر به بارگیری مدل نیست. پیام خطا این است: %1$s</string>
     <string name="dialog_err_change_model">تغییر مدل</string>
     <string name="dialog_err_close">بستن</string>
     <string name="dialog_progress_copy_model_title">در حال کپی کردن پرونده مدل ...</string>
-    <string name="dialog_progress_copy_model_text">٪ 1$s \n (مدل برای استفاده باید در فهرست داخلی برنامه کپی شود)</string>
+    <string name="dialog_progress_copy_model_text">%1$s \n (مدل برای استفاده باید در فهرست داخلی برنامه کپی شود)</string>
     <string name="toast_invalid_file">پرونده نامعتبر</string>
     <string name="chat_options_clear_messages">پاک کردن پیام های چت</string>
     <string name="chat_options_clear_messages_text">آیا مطمئن هستید که تمام پیام های این چت را پاک می کنید؟</string>
@@ -101,7 +101,7 @@
     <string name="dialog_edit_folder_name_title">ویرایش نام پوشه</string>
     <string name="dialog_edit_folder_button_text">ویرایش</string>
     <string name="edit_chat_message_done">انجام شد</string>
-    <string name="label_device_ram">RAM دستگاه:٪ .2f گیگابایت از کل٪ .2f گیگابایت استفاده شده است</string>
+    <string name="label_device_ram">RAM دستگاه: %.2f گیگابایت از کل %.2f گیگابایت استفاده شده است</string>
     <string name="download_model_step_title">مرحله 1: مدل را بارگیری کنید</string>
     <string name="import_model_step_title">مرحله 2: مدل را وارد کنید</string>
     <string name="import_model_step_des">مدل .gguf را که در مرحله 1 بارگیری کرده اید انتخاب کنید. برنامه مدل را در حافظه داخلی خود کپی می کند.</string>
