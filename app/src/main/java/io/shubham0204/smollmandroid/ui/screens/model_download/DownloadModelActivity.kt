@@ -25,6 +25,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -41,6 +42,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -51,6 +53,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,6 +65,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -80,16 +84,6 @@ import io.shubham0204.smollmandroid.ui.components.AppSpacer4W
 import io.shubham0204.smollmandroid.ui.components.createAlertDialog
 import io.shubham0204.smollmandroid.ui.screens.chat.ChatActivity
 import io.shubham0204.smollmandroid.ui.theme.SmolLMAndroidTheme
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.core.os.LocaleListCompat
 import org.koin.android.ext.android.inject
 
 class DownloadModelActivity : ComponentActivity() {
@@ -193,9 +187,9 @@ class DownloadModelActivity : ComponentActivity() {
             ) { innerPadding ->
                 Surface(
                     modifier =
-                        Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState()),
+                    Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     when (addNewModelStep) {
                         AddNewModelStep.ImportModel -> {
@@ -242,7 +236,8 @@ class DownloadModelActivity : ComponentActivity() {
                             RoundedCornerShape(
                                 8.dp,
                             ),
-                        ).padding(8.dp),
+                        )
+                        .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {
@@ -256,12 +251,12 @@ class DownloadModelActivity : ComponentActivity() {
                     }
                     Text(
                         color =
-                            if (model == selectedModel) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme
-                                    .colorScheme.onSurface
-                            },
+                        if (model == selectedModel) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            MaterialTheme
+                                .colorScheme.onSurface
+                        },
                         text = model.name,
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -290,7 +285,7 @@ class DownloadModelActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
                 enabled =
-                    viewModel.selectedModelState.value != null ||
+                viewModel.selectedModelState.value != null ||
                         viewModel.modelUrlState.value.isNotBlank(),
                 onClick = { viewModel.downloadModel() },
                 shape = RoundedCornerShape(4.dp),
@@ -381,7 +376,8 @@ class DownloadModelActivity : ComponentActivity() {
                                 Environment
                                     .getExternalStoragePublicDirectory(
                                         Environment.DIRECTORY_DOWNLOADS,
-                                    ).toUri(),
+                                    )
+                                    .toUri(),
                             )
                         }
                     launcher.launch(intent)
