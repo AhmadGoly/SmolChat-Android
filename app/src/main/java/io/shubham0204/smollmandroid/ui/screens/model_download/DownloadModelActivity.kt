@@ -80,6 +80,16 @@ import io.shubham0204.smollmandroid.ui.components.AppSpacer4W
 import io.shubham0204.smollmandroid.ui.components.createAlertDialog
 import io.shubham0204.smollmandroid.ui.screens.chat.ChatActivity
 import io.shubham0204.smollmandroid.ui.theme.SmolLMAndroidTheme
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import org.koin.android.ext.android.inject
 
 class DownloadModelActivity : ComponentActivity() {
@@ -150,6 +160,8 @@ class DownloadModelActivity : ComponentActivity() {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
+                    var showLanguageDialog by remember { mutableStateOf(false) }
+
                     TopAppBar(
                         title = { AppBarTitleText(stringResource(R.string.add_new_model_title)) },
                         navigationIcon = {
@@ -161,7 +173,22 @@ class DownloadModelActivity : ComponentActivity() {
                                 )
                             }
                         },
+                        actions = {
+                            IconButton(onClick = { showLanguageDialog = true }) {
+                                Icon(
+                                    FeatherIcons.Globe,
+                                    contentDescription = "Change Language",
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                )
+                            }
+                        }
                     )
+
+                    if (showLanguageDialog) {
+                        LanguageSelectionDialog {
+                            showLanguageDialog = false
+                        }
+                    }
                 },
             ) { innerPadding ->
                 Surface(
@@ -387,5 +414,37 @@ class DownloadModelActivity : ComponentActivity() {
             return ggufMagicNumberBytes.contentEquals(byteArrayOf(71, 71, 85, 70))
         }
         return false
+    }
+
+    @Composable
+    private fun LanguageSelectionDialog(onDismiss: () -> Unit) {
+        val languages = listOf("English", "中文", "فارسی")
+        val languageTags = listOf("en", "zh-CN", "fa")
+
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Select Language") },
+            text = {
+                Column {
+                    languages.forEachIndexed { index, language ->
+                        TextButton(
+                            onClick = {
+                                val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(languageTags[index])
+                                AppCompatDelegate.setApplicationLocales(appLocale)
+                                onDismiss()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(language)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

@@ -54,6 +54,14 @@ val bodyFontFamily =
         ),
     )
 
+val persianFontFamily =
+    FontFamily(
+        androidx.compose.ui.text.font.Font(
+            resId = R.font.vazirmatn,
+            weight = FontWeight.Normal,
+        )
+    )
+
 // Default Material 3 typography values
 val baseline = Typography()
 
