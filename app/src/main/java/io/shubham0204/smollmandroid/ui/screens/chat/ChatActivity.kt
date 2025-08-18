@@ -508,6 +508,7 @@ private fun LazyItemScope.MessageListItem(
                 modifier =
                 modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
             ) {
                 Column {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -582,7 +583,8 @@ private fun LazyItemScope.MessageListItem(
             Row(
                 modifier =
                 Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.End,
             ) {
                 Column(horizontalAlignment = Alignment.End) {
