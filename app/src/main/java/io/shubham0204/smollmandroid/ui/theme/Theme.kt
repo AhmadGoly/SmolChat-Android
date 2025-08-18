@@ -127,7 +127,8 @@ fun SmolLMAndroidTheme(
             else -> lightScheme
         }
 
-    val currentLocale = Locale.getDefault()
+    val context = LocalContext.current
+    val currentLocale = context.resources.configuration.locales[0]
     val fontFamily = if (currentLocale.language == "fa") {
         persianFontFamily
     } else {
