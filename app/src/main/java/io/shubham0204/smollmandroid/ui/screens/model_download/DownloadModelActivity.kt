@@ -181,7 +181,7 @@ class DownloadModelActivity : ComponentActivity() {
                         }
 
                         AddNewModelStep.DownloadModel -> {
-                            DownloadModelScreen(
+                            GraphicalDownloadModelScreen(
                                 onHFModelSelectClick = onHFModelSelectClick,
                                 onNextSectionClick = {
                                     addNewModelStep = AddNewModelStep.ImportModel
@@ -387,5 +387,67 @@ class DownloadModelActivity : ComponentActivity() {
             return ggufMagicNumberBytes.contentEquals(byteArrayOf(71, 71, 85, 70))
         }
         return false
+    }
+
+    @Composable
+    private fun GraphicalDownloadModelScreen(
+        onHFModelSelectClick: () -> Unit,
+        onNextSectionClick: () -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        Column(
+            modifier = modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.download_model_step_title),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Option 1: Download from URL
+            OutlinedButton(
+                onClick = { /* TODO */ },
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(FeatherIcons.Download, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.download_model_download))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Option 2: Browse HuggingFace
+            OutlinedButton(
+                onClick = onHFModelSelectClick,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(FeatherIcons.Globe, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.download_model_browse_hf))
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.download_model_next_step_des),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Next button
+            Button(
+                onClick = onNextSectionClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.button_text_next))
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(FeatherIcons.ArrowRight, contentDescription = null)
+            }
+        }
     }
 }
