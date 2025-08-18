@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.SmolLMAndroid" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:fontFamily">@font/vazirmatn_regular</item>
     </style>
 
 </resources>

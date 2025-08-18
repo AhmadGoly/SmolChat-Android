@@ -77,6 +77,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,6 +85,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -91,6 +93,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
@@ -207,111 +210,113 @@ fun ChatActivityScreenUI(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     LaunchedEffect(currChat) { viewModel.loadModel() }
-    SmolLMAndroidTheme {
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                DrawerUI(
-                    viewModel,
-                    onItemClick = { chat ->
-                        viewModel.switchChat(chat)
-                        scope.launch { drawerState.close() }
-                    },
-                    onManageTasksClick = {
-                        scope.launch { drawerState.close() }
-                        Intent(context, ManageTasksActivity::class.java).also {
-                            context.startActivity(it)
-                        }
-                    },
-                    onCreateTaskClick = {
-                        scope.launch { drawerState.close() }
-                        viewModel.onEvent(
-                            ChatScreenUIEvent.DialogEvents.ToggleTaskListBottomList(
-                                visible = true,
-                            ),
-                        )
-                    },
-                )
-                BackHandler(drawerState.isOpen) {
-                    scope.launch { drawerState.close() }
-                }
-            },
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        modifier = Modifier.shadow(2.dp),
-                        title = {
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                AppBarTitleText(
-                                    currChat?.name ?: stringResource(R.string.chat_select_chat),
-                                )
-                                Text(
-                                    if (currChat != null && currChat?.llmModelId != -1L) {
-                                        viewModel.modelsRepository
-                                            .getModelFromId(currChat!!.llmModelId)
-                                            ?.name ?: ""
-                                    } else {
-                                        ""
-                                    },
-                                    style = MaterialTheme.typography.labelSmall,
-                                )
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        SmolLMAndroidTheme {
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    DrawerUI(
+                        viewModel,
+                        onItemClick = { chat ->
+                            viewModel.switchChat(chat)
+                            scope.launch { drawerState.close() }
+                        },
+                        onManageTasksClick = {
+                            scope.launch { drawerState.close() }
+                            Intent(context, ManageTasksActivity::class.java).also {
+                                context.startActivity(it)
                             }
                         },
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(
-                                    FeatherIcons.Menu,
-                                    contentDescription = stringResource(R.string.chat_view_chats),
-                                    tint = MaterialTheme.colorScheme.secondary,
-                                )
-                            }
-                        },
-                        actions = {
-                            if (currChat != null) {
-                                Box {
-                                    IconButton(
-                                        onClick = {
-                                            viewModel.onEvent(
-                                                ChatScreenUIEvent.DialogEvents.ToggleMoreOptionsPopup(
-                                                    visible = true,
-                                                ),
-                                            )
-                                        },
-                                    ) {
-                                        Icon(
-                                            FeatherIcons.MoreVertical,
-                                            contentDescription = "Options",
-                                            tint = MaterialTheme.colorScheme.secondary,
-                                        )
-                                    }
-                                    ChatMoreOptionsPopup(viewModel, onEditChatParamsClick)
-                                }
-                            }
+                        onCreateTaskClick = {
+                            scope.launch { drawerState.close() }
+                            viewModel.onEvent(
+                                ChatScreenUIEvent.DialogEvents.ToggleTaskListBottomList(
+                                    visible = true,
+                                ),
+                            )
                         },
                     )
+                    BackHandler(drawerState.isOpen) {
+                        scope.launch { drawerState.close() }
+                    }
                 },
-            ) { innerPadding ->
-                Column(
-                    modifier =
-                        Modifier
-                            .padding(innerPadding)
-                            .background(MaterialTheme.colorScheme.surface),
-                ) {
-                    if (currChat != null) {
-                        ScreenUI(viewModel, currChat!!)
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            modifier = Modifier.shadow(2.dp),
+                            title = {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    AppBarTitleText(
+                                        currChat?.name ?: stringResource(R.string.chat_select_chat),
+                                    )
+                                    Text(
+                                        if (currChat != null && currChat?.llmModelId != -1L) {
+                                            viewModel.modelsRepository
+                                                .getModelFromId(currChat!!.llmModelId)
+                                                ?.name ?: ""
+                                        } else {
+                                            ""
+                                        },
+                                        style = MaterialTheme.typography.labelSmall,
+                                    )
+                                }
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                    Icon(
+                                        FeatherIcons.Menu,
+                                        contentDescription = stringResource(R.string.chat_view_chats),
+                                        tint = MaterialTheme.colorScheme.secondary,
+                                    )
+                                }
+                            },
+                            actions = {
+                                if (currChat != null) {
+                                    Box {
+                                        IconButton(
+                                            onClick = {
+                                                viewModel.onEvent(
+                                                    ChatScreenUIEvent.DialogEvents.ToggleMoreOptionsPopup(
+                                                        visible = true,
+                                                    ),
+                                                )
+                                            },
+                                        ) {
+                                            Icon(
+                                                FeatherIcons.MoreVertical,
+                                                contentDescription = "Options",
+                                                tint = MaterialTheme.colorScheme.secondary,
+                                            )
+                                        }
+                                        ChatMoreOptionsPopup(viewModel, onEditChatParamsClick)
+                                    }
+                                }
+                            },
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier =
+                            Modifier
+                                .padding(innerPadding)
+                                .background(MaterialTheme.colorScheme.surface),
+                    ) {
+                        if (currChat != null) {
+                            ScreenUI(viewModel, currChat!!)
+                        }
                     }
                 }
+                SelectModelsList(viewModel)
+                TasksListBottomSheet(viewModel)
+                ChangeFolderDialog(viewModel)
+                TextFieldDialog()
+                FolderOptionsDialog()
             }
-            SelectModelsList(viewModel)
-            TasksListBottomSheet(viewModel)
-            ChangeFolderDialog(viewModel)
-            TextFieldDialog()
-            FolderOptionsDialog()
         }
     }
 }
