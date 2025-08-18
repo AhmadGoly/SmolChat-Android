@@ -17,6 +17,8 @@
 package io.shubham0204.smollmandroid
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
@@ -24,6 +26,12 @@ import org.koin.ksp.generated.module
 class SmolChatApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+
+        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val language = sharedPreferences.getString("language", "fa")
+        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(language)
+        AppCompatDelegate.setApplicationLocales(appLocale)
+
         startKoin {
             androidContext(this@SmolChatApplication)
             modules(KoinAppModule().module)

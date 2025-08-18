@@ -425,8 +425,11 @@ class DownloadModelActivity : ComponentActivity() {
                     languages.forEachIndexed { index, language ->
                         TextButton(
                             onClick = {
+                                val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
+                                sharedPreferences.edit().putString("language", languageTags[index]).apply()
                                 val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(languageTags[index])
                                 AppCompatDelegate.setApplicationLocales(appLocale)
+                                this@DownloadModelActivity.recreate()
                                 onDismiss()
                             },
                             modifier = Modifier.fillMaxWidth()
