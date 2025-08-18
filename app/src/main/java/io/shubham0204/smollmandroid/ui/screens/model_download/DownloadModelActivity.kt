@@ -429,8 +429,10 @@ class DownloadModelActivity : ComponentActivity() {
                                 sharedPreferences.edit().putString("language", languageTags[index]).apply()
                                 val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(languageTags[index])
                                 AppCompatDelegate.setApplicationLocales(appLocale)
-                                this@DownloadModelActivity.recreate()
-                                onDismiss()
+                                val intent = Intent(this@DownloadModelActivity, MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                startActivity(intent)
+                                Runtime.getRuntime().exit(0)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {

@@ -27,6 +27,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.core.os.LocaleListCompat
 import java.util.Locale
 
 private val lightScheme =
@@ -127,8 +128,7 @@ fun SmolLMAndroidTheme(
             else -> lightScheme
         }
 
-    val context = LocalContext.current
-    val currentLocale = context.resources.configuration.locales[0]
+    val currentLocale = LocaleListCompat.getAdjustedDefault()[0]
     val fontFamily = if (currentLocale.language == "fa") {
         persianFontFamily
     } else {

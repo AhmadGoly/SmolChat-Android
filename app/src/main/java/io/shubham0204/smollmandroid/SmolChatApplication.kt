@@ -27,9 +27,8 @@ class SmolChatApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val language = sharedPreferences.getString("language", "fa")
-        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(language)
+        // Force Persian locale on startup
+        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags("fa")
         AppCompatDelegate.setApplicationLocales(appLocale)
 
         startKoin {
